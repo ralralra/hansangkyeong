@@ -226,10 +226,13 @@
 
         /* 비교표 섹션 */
         .comparison-table {
-            width: 100%;
+            width: auto; 
+            margin: 0 auto;  
+            display: block; 
             border-collapse: collapse;
             margin-top: 2rem;
             overflow-x: auto;
+            align-items: center;
             display: block;
         }
 
@@ -241,7 +244,7 @@
         .comparison-table th,
         .comparison-table td {
             padding: 1.2rem;
-            text-align: left;
+            text-align: center;
             border: 1px solid #e0e0e0;
         }
 
@@ -633,14 +636,14 @@
         <p style="text-align: center; margin-bottom: 2rem; font-size: 1.1rem; color: #555;">
             주요 경쟁 후보들과 한상경 후보의 차별점을 비교해보세요
         </p>
-        <div style="overflow-x: auto;">
-            <table class="comparison-table">
+        <div style="overflow-x: auto; max-width: 1200px; margin: 0 auto; text-align: center;">
+    <table class="comparison-table" style="display: inline-block; text-align: left;">
                 <thead>
                     <tr>
                         <th>비교 항목</th>
                         <th class="highlight">한상경 (실용중도)</th>
-                        <th>이병도 (진보)</th>
-                        <th>명노희 (보수)</th>
+                        <th>L후보 (진보)</th>
+                        <th>M후보 (보수)</th>
                     </tr>
                 </thead>
                 <tbody>
