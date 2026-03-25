@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>충남 교육 데이터 지도</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    crossorigin=""
+  ></script>
+
+  <style>
+    :root {
+      --bg-main: #F4F1E0;
+      --bg-card: #FFFFFF;
+      --bg-sub: #DBDDBA;
+      --mint: #A8E1C2;
+      --yellow: #E1DB00;
+      --green-soft: #CBE0A0;
+
+      --text-main: #243127;
+      --text-sub: #5F6B60;
+      --line: #D9DCC7;
+
+      --status-over: #E1DB00;
+      --status-normal: #A8E1C2;
+      --status-decline: #CBE0A0;
+
+      --shadow: 0 12px 28px rgba(36, 49, 39, 0.08);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: linear-gradient(180deg, #F8F6E9 0%, var(--bg-main) 100%);
+      color: var(--text-main);
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px 20px 32px;
+    }
+
+    .topbar {
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(168, 225, 194, 0.38);
+      border: 1px solid rgba(95, 107, 96, 0.12);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .header {
+      margin-top: 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .header-left h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 4vw, 42px);
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+    }
+
+    .header-left p {
+      margin: 0;
+      max-width: 860px;
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--text-sub);
+    }
+
+    .legend-box {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(217, 220, 199, 0.9);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+      min-width: 280px;
+    }
+
+    .legend-box-title {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid rgba(36, 49, 39, 0.12);
+    }
+
+    .dot.over { background: var(--status-over); }
+    .dot.normal { background: var(--status-normal); }
+    .dot.decline { background: var(--status-decline); }
+
+    .layout {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: minmax(700px, 1.22fr) minmax(340px, 0.78fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .map-card-header {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(244,241,224,0.8) 100%);
+    }
+
+    .map-card-header h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+    }
+
+    .map-card-header p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-sub);
+    }
+
+    #map {
+      width: 100%;
+      height: 760px;
+      background: #F9F8EF;
+    }
+
+    .side {
+      padding: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(244,241,224,0.82) 100%);
+    }
+
+    .side-title {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+    }
+
+    .side-desc {
+      margin: 0 0 16px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-sub);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 18px;
+      border: 1px solid rgba(36,49,39,0.08);
+    }
+
+    .status-badge::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      display: inline-block;
+    }
+
+    .status-over {
+      background: rgba(225, 219, 0, 0.28);
+      color: #6A6600;
+    }
+
+    .status-normal {
+      background: rgba(168, 225, 194, 0.34);
+      color: #2C6B4A;
+    }
+
+    .status-decline {
+      background: rgba(203, 224, 160, 0.42);
+      color: #577134;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.82);
+      padding: 14px 14px 12px;
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 7px;
+      line-height: 1.4;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+    }
+
+    .policy-box {
+      padding: 16px 16px 14px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(168,225,194,0.18) 0%, rgba(203,224,160,0.22) 100%);
+      border: 1px solid rgba(95,107,96,0.12);
+    }
+
+    .policy-box h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: var(--text-main);
+    }
+
+    .policy-box ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text-sub);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .note {
+      margin-top: 16px;
+      border-radius: var(--radius-md);
+      background: rgba(219, 221, 186, 0.45);
+      border: 1px solid rgba(95,107,96,0.12);
+      padding: 14px 15px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-sub);
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-sub);
+      text-align: right;
+      padding-right: 2px;
+    }
+
+    /* Leaflet override */
+    .leaflet-control-zoom a {
+      background: rgba(255,255,255,0.96);
+      color: var(--text-main);
+      border-bottom: 1px solid rgba(95,107,96,0.12);
+    }
+
+    .leaflet-control-zoom a:hover {
+      background: var(--bg-main);
+    }
+
+    .leaflet-popup-content-wrapper {
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(95,107,96,0.10);
+    }
+
+    .leaflet-tooltip.region-tooltip {
+      background: rgba(255,255,255,0.96);
+      color: var(--text-main);
+      border: 1px solid rgba(95,107,96,0.12);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .leaflet-tooltip.region-tooltip::before {
+      border-top-color: rgba(255,255,255,0.96);
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      #map {
+        height: 620px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .page {
+        padding: 20px 12px 24px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      #map {
+        height: 520px;
+      }
+
+      .side-title {
+        font-size: 24px;
+      }
+
+      .legend-box {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <span class="eyebrow">충남 교육 데이터 시각화 · 데모 버전</span>
+      <div class="header">
+        <div class="header-left">
+          <h1>지역별 학생 수와 교육 여건을<br>한 화면에서 확인하는 충남 교육 지도</h1>
+          <p>
+            천안·아산 과밀지역 문제와 학생 감소 지역의 차이를 직관적으로 보여주기 위한 시각화 예시다.
+            지도에서 지역을 클릭하면 학생 수, 학교 수, 학급당 학생 수, 교원 1인당 학생 수, 총지원금과
+            추천 정책이 우측 패널에 표시된다.
+          </p>
+        </div>
+
+        <div class="legend-box">
+          <div class="legend-box-title">지도 범례</div>
+          <div class="legend">
+            <span><i class="dot over"></i>과밀지역</span>
+            <span><i class="dot normal"></i>적정지역</span>
+            <span><i class="dot decline"></i>학생 감소 지역</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <section class="card">
+        <div class="map-card-header">
+          <h2>충남 교육 데이터 지도</h2>
+          <p>천안시 동남구, 천안시 서북구, 아산시는 강제 과밀지역으로 표시되며, 나머지 지역은 학급당 학생 수 기준으로 자동 계산된다.</p>
+        </div>
+        <div id="map"></div>
+      </section>
+
+      <aside class="card side">
+        <h2 id="regionTitle" class="side-title">천안시 서북구</h2>
+        <p id="regionDesc" class="side-desc">
+          지역 특성에 따라 필요한 교육정책이 다르다는 점을 보여주기 위한 상세 패널이다.
+        </p>
+
+        <div id="statusBadge" class="status-badge status-over">과밀지역</div>
+
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">학생 수</span>
+            <span id="studentCount" class="stat-value">-</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">학교 수</span>
+            <span id="schoolCount" class="stat-value">-</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">학급당 학생 수</span>
+            <span id="studentsPerClass" class="stat-value">-</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">교원 1인당 학생 수</span>
+            <span id="studentsPerTeacher" class="stat-value">-</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">총지원금</span>
+            <span id="budgetTotal" class="stat-value">-</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">학생 1인당 지원금</span>
+            <span id="budgetPerStudent" class="stat-value">-</span>
+          </div>
+        </div>
+
+        <div class="policy-box">
+          <h3>추천 정책</h3>
+          <ul id="policyList"></ul>
+        </div>
+
+        <div class="note">
+          현재 수치는 구조 시연용 예시값이다. 실제 공개 시에는 KOSIS, KESS, 충남교육청 공시자료 등으로 검증한 값으로 교체하는 편이 맞다.
+        </div>
+      </aside>
+    </div>
+
+    <div class="footer-note">Demo UI · HTML + Leaflet + Public GeoJSON</div>
+  </div>
+
+  <script>
+    // =========================
+    // 원본 데이터
+    // =========================
+    const REGION_DATA = [
+      { region_code: "44131", region_name: "천안시 동남구", population: 258000, student_count: 30500, school_count: 78, class_count: 1280, teacher_count: 1820, budget_total_krw: 21000000000 },
+      { region_code: "44133", region_name: "천안시 서북구", population: 430000, student_count: 48200, school_count: 96, class_count: 1910, teacher_count: 2640, budget_total_krw: 33500000000 },
+      { region_code: "44200", region_name: "공주시", population: 103000, student_count: 11200, school_count: 49, class_count: 510, teacher_count: 760, budget_total_krw: 11800000000 },
+      { region_code: "44210", region_name: "보령시", population: 92000, student_count: 8900, school_count: 45, class_count: 430, teacher_count: 690, budget_total_krw: 10900000000 },
+      { region_code: "44230", region_name: "아산시", population: 396000, student_count: 45100, school_count: 92, class_count: 1730, teacher_count: 2510, budget_total_krw: 30100000000 },
+      { region_code: "44250", region_name: "서산시", population: 176000, student_count: 16800, school_count: 58, class_count: 730, teacher_count: 1110, budget_total_krw: 15300000000 },
+      { region_code: "44270", region_name: "논산시", population: 111000, student_count: 10300, school_count: 47, class_count: 470, teacher_count: 760, budget_total_krw: 11200000000 },
+      { region_code: "44710", region_name: "계룡시", population: 46000, student_count: 6300, school_count: 19, class_count: 260, teacher_count: 360, budget_total_krw: 5200000000 },
+      { region_code: "44290", region_name: "당진시", population: 169000, student_count: 18700, school_count: 62, class_count: 810, teacher_count: 1170, budget_total_krw: 14900000000 },
+      { region_code: "44760", region_name: "금산군", population: 50000, student_count: 4200, school_count: 28, class_count: 220, teacher_count: 360, budget_total_krw: 4900000000 },
+      { region_code: "44770", region_name: "부여군", population: 62000, student_count: 5200, school_count: 34, class_count: 250, teacher_count: 420, budget_total_krw: 6100000000 },
+      { region_code: "44790", region_name: "서천군", population: 49000, student_count: 4100, school_count: 29, class_count: 210, teacher_count: 340, budget_total_krw: 4800000000 },
+      { region_code: "44800", region_name: "청양군", population: 30000, student_count: 2500, school_count: 22, class_count: 140, teacher_count: 230, budget_total_krw: 3700000000 },
+      { region_code: "44810", region_name: "홍성군", population: 101000, student_count: 9900, school_count: 42, class_count: 430, teacher_count: 710, budget_total_krw: 10100000000 },
+      { region_code: "44825", region_name: "예산군", population: 78000, student_count: 6900, school_count: 35, class_count: 310, teacher_count: 540, budget_total_krw: 7600000000 },
+      { region_code: "44830", region_name: "태안군", population: 61000, student_count: 4700, school_count: 31, class_count: 230, teacher_count: 390, budget_total_krw: 5800000000 }
+    ];
+
+    // =========================
+    // 지역명 정규화
+    // =========================
+    function normalizeRegionName(name) {
+      return String(name || "")
+        .replace(/\s+/g, "")
+        .replace(/\(.*?\)/g, "")
+        .trim();
+    }
+
+    // =========================
+    // 강제 과밀 지역
+    // =========================
+    const FORCE_OVERCROWDED = new Set([
+      "천안시동남구",
+      "천안시서북구",
+      "아산시"
+    ]);
+
+    // =========================
+    // 계산 함수
+    // =========================
+    function calcStudentsPerClass(row) {
+      return row.student_count / row.class_count;
+    }
+
+    function calcStudentsPerTeacher(row) {
+      return row.student_count / row.teacher_count;
+    }
+
+    function calcBudgetPerStudent(row) {
+      return row.budget_total_krw / row.student_count;
+    }
+
+    function calcStatus(row) {
+      const normalized = normalizeRegionName(row.region_name);
+
+      if (FORCE_OVERCROWDED.has(normalized)) {
+        return "과밀";
+      }
+
+      const v = calcStudentsPerClass(row);
+
+      if (v >= 28) return "과밀";
+      if (v <= 20) return "학생감소";
+      return "적정";
+    }
+
+    function calcPolicy(status) {
+      if (status === "과밀") {
+        return [
+          "학교 신설·증설 검토",
+          "교실 과밀 완화",
+          "교사 및 지원 인력 확충"
+        ];
+      }
+      if (status === "학생감소") {
+        return [
+          "작은학교 특성화",
+          "통학 지원 강화",
+          "공동교육과정·원격수업 지원"
+        ];
+      }
+      return [
+        "기초학력 지원",
+        "진로·미래교육 연계",
+        "생활지도 및 돌봄 안정화"
+      ];
+    }
+
+    function getStatusColor(status) {
+      if (status === "과밀") return "#E1DB00";
+      if (status === "학생감소") return "#CBE0A0";
+      return "#A8E1C2";
+    }
+
+    const REGION_MAP = new Map(
+      REGION_DATA.map(row => {
+        const status = calcStatus(row);
+        return [
+          normalizeRegionName(row.region_name),
+          {
+            ...row,
+            status,
+            students_per_class: calcStudentsPerClass(row),
+            students_per_teacher: calcStudentsPerTeacher(row),
+            budget_per_student: calcBudgetPerStudent(row),
+            policy_recommendation: calcPolicy(status)
+          }
+        ];
+      })
+    );
+
+    // =========================
+    // 포맷 함수
+    // =========================
+    function numberFormat(n) {
+      return new Intl.NumberFormat("ko-KR").format(Math.round(n));
+    }
+
+    function eokFormat(krw) {
+      return (krw / 100000000).toFixed(1) + "억 원";
+    }
+
+    function manwonFormat(krw) {
+      return (krw / 10000).toFixed(1) + "만 원";
+    }
+
+    // =========================
+    // 사이드 패널
+    // =========================
+    function updateSidePanel(row) {
+      document.getElementById("regionTitle").textContent = row.region_name;
+      document.getElementById("regionDesc").textContent =
+        "학생 규모, 학급 밀도, 교원 수, 지원 규모를 바탕으로 지역 상태를 보여주는 예시 패널이다.";
+
+      const badge = document.getElementById("statusBadge");
+      badge.textContent = row.status === "학생감소" ? "학생 감소 지역" : row.status + "지역";
+      badge.className =
+        "status-badge " +
+        (row.status === "과밀"
+          ? "status-over"
+          : row.status === "학생감소"
+          ? "status-decline"
+          : "status-normal");
+
+      document.getElementById("studentCount").textContent = numberFormat(row.student_count) + "명";
+      document.getElementById("schoolCount").textContent = numberFormat(row.school_count) + "개";
+      document.getElementById("studentsPerClass").textContent = row.students_per_class.toFixed(1) + "명";
+      document.getElementById("studentsPerTeacher").textContent = row.students_per_teacher.toFixed(1) + "명";
+      document.getElementById("budgetTotal").textContent = eokFormat(row.budget_total_krw);
+      document.getElementById("budgetPerStudent").textContent = manwonFormat(row.budget_per_student);
+
+      const list = document.getElementById("policyList");
+      list.innerHTML = "";
+      row.policy_recommendation.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+
+    // =========================
+    // Leaflet 지도
+    // =========================
+    const map = L.map("map", {
+      zoomControl: true,
+      attributionControl: true
+    }).setView([36.52, 126.85], 9);
+
+    // 밝고 깔끔한 바탕지도
+    L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+      {
+        attribution: "&copy; OpenStreetMap &copy; CARTO",
+        subdomains: "abcd",
+        maxZoom: 19
+      }
+    ).addTo(map);
+
+    let geojsonLayer = null;
+
+    function getFeatureRegionName(feature) {
+      const rawName =
+        feature.properties?.name ||
+        feature.properties?.NAME ||
+        feature.properties?.adm_nm ||
+        feature.properties?.sggnm ||
+        feature.properties?.sigungu ||
+        "";
+
+      return normalizeRegionName(rawName);
+    }
+
+    function styleFeature(feature) {
+      const regionName = getFeatureRegionName(feature);
+      const row = REGION_MAP.get(regionName);
+      const status = row ? row.status : "적정";
+
+      return {
+        color: "#FFFFFF",
+        weight: 2,
+        fillColor: getStatusColor(status),
+        fillOpacity: 0.82
+      };
+    }
+
+    function onEachFeature(feature, layer) {
+      const regionName = getFeatureRegionName(feature);
+      const row = REGION_MAP.get(regionName);
+
+      if (!row) {
+        const fallbackName =
+          feature.properties?.name ||
+          feature.properties?.NAME ||
+          feature.properties?.adm_nm ||
+          feature.properties?.sggnm ||
+          feature.properties?.sigungu ||
+          "이름없음";
+
+        layer.bindTooltip(fallbackName, {
+          direction: "top",
+          sticky: true,
+          className: "region-tooltip"
+        });
+        return;
+      }
+
+      layer.bindTooltip(
+        `
+        <strong>${row.region_name}</strong><br>
+        학생 수: ${numberFormat(row.student_count)}명<br>
+        학교 수: ${numberFormat(row.school_count)}개<br>
+        학급당 학생 수: ${row.students_per_class.toFixed(1)}명<br>
+        학생 1인당 지원금: ${manwonFormat(row.budget_per_student)}<br>
+        상태: <b>${row.status === "학생감소" ? "학생 감소" : row.status}</b>
+        `,
+        {
+          direction: "top",
+          sticky: true,
+          className: "region-tooltip"
+        }
+      );
+
+      layer.on({
+        mouseover: function (e) {
+          e.target.setStyle({
+            weight: 3,
+            color: "#7A846A",
+            fillOpacity: 0.95
+          });
+        },
+        mouseout: function (e) {
+          geojsonLayer.resetStyle(e.target);
+        },
+        click: function (e) {
+          updateSidePanel(row);
+          map.fitBounds(e.target.getBounds(), {
+            padding: [24, 24]
+          });
+        }
+      });
+    }
+
+    // =========================
+    // GeoJSON 로드
+    // =========================
+    async function loadGeoJson() {
+      const candidates = [
+        "https://github.com/southkorea/southkorea-maps/blob/master/kostat/2018/json/skorea-municipalities-2018-geo.json"
+          .replace("github.com", "raw.githubusercontent.com")
+          .replace("/blob/", "/")
+      ];
+
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) continue;
+
+          const geo = await res.json();
+          const filtered = filterChungnamFeatures(geo);
+
+          geojsonLayer = L.geoJSON(filtered, {
+            style: styleFeature,
+            onEachFeature: onEachFeature
+          }).addTo(map);
+
+          map.fitBounds(geojsonLayer.getBounds(), {
+            padding: [20, 20]
+          });
+          return;
+        } catch (err) {
+          console.warn("GeoJSON load failed:", url, err);
+        }
+      }
+
+      alert("GeoJSON을 불러오지 못했습니다. file:// 방식이 아니라 로컬 서버 또는 GitHub Pages에서 열어주세요.");
+    }
+
+    function filterChungnamFeatures(geo) {
+      if (!geo || !geo.features) return geo;
+
+      const allowed = new Set([
+        "천안시동남구",
+        "천안시서북구",
+        "공주시",
+        "보령시",
+        "아산시",
+        "서산시",
+        "논산시",
+        "계룡시",
+        "당진시",
+        "금산군",
+        "부여군",
+        "서천군",
+        "청양군",
+        "홍성군",
+        "예산군",
+        "태안군"
+      ]);
+
+      const features = geo.features.filter(f => {
+        const name = getFeatureRegionName(f);
+        return allowed.has(name);
+      });
+
+      return { ...geo, features };
+    }
+
+    // 초기 패널
+    updateSidePanel(REGION_MAP.get("천안시서북구"));
+
+    // 지도 불러오기
+    loadGeoJson();
+  </script>
+</body>
+</html>
