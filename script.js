@@ -507,7 +507,7 @@ function initForm() {
      * 예) const FORM_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
      * URL이 없으면 로컬 처리로 대체됩니다.
      */
-    const FORM_URL = ""; // ← Google Apps Script URL 입력
+    const FORM_URL = "https://script.google.com/macros/s/AKfycbwXxb1ZBoHvNOHLwxQ5PHxHtBsjjb8tQ5vlKT7UYF8rpTpWauW6oE7NoApXca1evRDEQw/exec"; // ← Google Apps Script URL 입력
 
     const data = Object.fromEntries(new FormData(form).entries());
     data.timestamp = new Date().toLocaleString("ko-KR");
