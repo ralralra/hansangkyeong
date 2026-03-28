@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>한상경 충남교육감 예비후보 — 웹카드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --gutter: 2rem;
+      --navy:  #1E3A8A;
+      --cream: #F4F1E0;
+      --mint:  #A8E1C2;
+      --yellow:#E1DB00;
+    }
+
+    @media (max-width: 600px) {
+      :root { --gutter: 1rem; }
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--navy);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    .content-wrap {
+      background: var(--navy);
+      overflow: clip;
+    }
+
+    /* ── 헤더 ───────────────────────────────── */
+    header {
+      min-height: 100vh;
+      display: grid;
+      align-content: center;
+      padding-left: clamp(2rem, 6vw, 6rem);
+    }
+
+    .header-eyebrow {
+      font-size: clamp(0.7rem, 1.5vw, 1rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mint);
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .header-title {
+      font-family: 'Noto Serif KR', serif;
+      font-size: clamp(3.5rem, 11vw, 10rem);
+      line-height: 0.9;
+      margin: 0 0 32px;
+      color: #fff;
+    }
+
+    .header-title em {
+      font-style: normal;
+      color: var(--yellow);
+    }
+
+    .header-sub {
+      font-size: clamp(0.85rem, 1.8vw, 1.2rem);
+      color: rgba(255,255,255,0.6);
+      max-width: 480px;
+      line-height: 1.7;
+    }
+
+    .scroll-hint {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 48px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .scroll-hint::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* ── 스크롤 섹션 ─────────────────────────── */
+    main section:first-of-type {
+      min-height: 260vh;
+    }
+
+    .content {
+      min-height: 100vh;
+      width: 100vw;
+      display: flex;
+      place-items: center;
+      align-content: center;
+      position: sticky;
+      top: 0;
+      overflow: hidden;
+    }
+
+    main section:last-of-type {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: var(--cream);
+    }
+
+    .outro-title {
+      font-family: 'Noto Serif KR', serif;
+      font-size: clamp(2rem, 6vw, 5rem);
+      color: var(--navy);
+      text-align: center;
+      line-height: 1.4;
+    }
+    .outro-title em {
+      font-style: normal;
+      color: #C8A800;
+    }
+    .outro-sub {
+      font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+      color: #555;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .outro-link {
+      display: inline-block;
+      margin-top: 36px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 13px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .outro-link:hover { opacity: 0.8; }
+
+    /* ── 그리드 ──────────────────────────────── */
+    .grid {
+      --offset: 0;
+      --container-width: 1600px;
+      --gap: clamp(8px, 6vw, 72px);
+
+      width: var(--container-width);
+      max-width: calc(100% - (2 * var(--gutter)));
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(3, auto);
+      gap: var(--gap);
+      margin: 0 auto;
+      align-content: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+        --offset: -1;
+      }
+      .grid > .layer:nth-of-type(1) { display: none; }
+    }
+
+    /* layers using subgrid */
+    .grid > .layer {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-row: 1 / -1;
+      grid-template-columns: subgrid;
+      grid-template-rows: subgrid;
+    }
+
+    /* Layer 1: 바깥 열 */
+    .grid > .layer:nth-of-type(1) div:nth-of-type(odd)  { grid-column: 1; }
+    .grid > .layer:nth-of-type(1) div:nth-of-type(even) { grid-column: -2; }
+
+    /* Layer 2: 안쪽 열 */
+    .grid > .layer:nth-of-type(2) div:nth-of-type(odd)  { grid-column: calc(2 + var(--offset)); }
+    .grid > .layer:nth-of-type(2) div:nth-of-type(even) { grid-column: calc(-3 - var(--offset)); }
+
+    /* Layer 3: 가운데 열 상하 */
+    .grid > .layer:nth-of-type(3) div:first-of-type {
+      grid-column: calc(3 + var(--offset));
+      grid-row: 1;
+    }
+    .grid > .layer:nth-of-type(3) div:last-of-type {
+      grid-column: calc(3 + var(--offset));
+      grid-row: -1;
+    }
+
+    /* ── 카드 이미지 — 3:4 세로 비율 ─────────── */
+    .grid img {
+      width: 100%;
+      aspect-ratio: 3 / 4;   /* ← 웹카드 비율 */
+      object-fit: cover;
+      border-radius: 10px;
+      display: block;
+    }
+
+    /* ── 가운데 스케일러 이미지 ─────────────── */
+    .grid .scaler {
+      position: relative;
+      grid-area: 2 / calc(3 + var(--offset));
+      z-index: 2;
+    }
+
+    .scaler {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .scaler img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      object-fit: cover;
+      border-radius: 12px;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 3 / 4;
+    }
+  </style>
+</head>
+<body>
+<div class="content-wrap">
+
+  <!-- ── 헤더 ── -->
+  <header>
+    <p class="header-eyebrow">충남교육감 예비후보 · 웹카드</p>
+    <h1 class="header-title">
+      말이 아닌<br /><em>성과로.</em>
+    </h1>
+    <p class="header-sub">
+      한상경 후보의 핵심 공약과 교육 철학을<br />
+      카드로 담았습니다. 스크롤하여 확인하세요.
+    </p>
+    <div class="scroll-hint">scroll</div>
+  </header>
+
+  <main>
+    <!-- 스크롤 애니메이션 섹션 -->
+    <section>
+      <div class="content">
+        <div class="grid">
+
+          <!-- Layer 1: 바깥 열 (6장) -->
+          <!--
+            [이미지 교체 안내 — Layer 1 바깥 열]
+            홀수(1·3·5)번 div → 왼쪽 열 / 짝수(2·4·6)번 → 오른쪽 열
+            src를 실제 웹카드 이미지 경로로 교체하세요.
+            예) src="./images/card-01.jpg"
+          -->
+          <div class="layer">
+            <div><img src="https://www.genspark.ai/api/files/s/l4gc1pRT?cache_control=3600" alt="한상경 후보 웹카드 헤드라인" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/QzwowOOJ?cache_control=3600" alt="한상경 후보 웹카드 엔딩" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/xU82Vlxx?cache_control=3600" alt="한상경 후보 웹카드 Q&A 1" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/gSV1qSBM?cache_control=3600" alt="한상경 후보 웹카드 Q&A 2" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/wfvdr6g9?cache_control=3600" alt="한상경 후보 웹카드 Q&A 3" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/HKr7Eh60?cache_control=3600" alt="한상경 후보 웹카드 인물소개" /></div>
+          </div>
+
+          <!-- Layer 2: 안쪽 열 (6장) -->
+          <!--
+            [이미지 교체 안내 — Layer 2 안쪽 열]
+            연령대별 포스터, SNS 카드 등 추가 소재로 교체하세요.
+            예) src="./images/poster-20s.jpg"
+          -->
+          <div class="layer">
+            <div><img src="https://www.genspark.ai/api/files/s/PtTD4FG6?cache_control=3600" alt="20대 타겟 카드" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/QTnIxtpu?cache_control=3600" alt="40대 타겟 카드" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/CrYi02S1?cache_control=3600" alt="20대 Story 카드" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/gzDHN4Ns?cache_control=3600" alt="40대 Facebook 카드" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/E5AfqFkj?cache_control=3600" alt="60대 포스터" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/h9JGFVgf?cache_control=3600" alt="60대 가로형" /></div>
+          </div>
+
+          <!-- Layer 3: 가운데 열 상단·하단 (2장) -->
+          <!--
+            [이미지 교체 안내 — Layer 3 상단·하단]
+            예) src="./images/card-feature.jpg"
+          -->
+          <div class="layer">
+            <div><img src="https://www.genspark.ai/api/files/s/l4gc1pRT?cache_control=3600" alt="웹카드 헤드라인" /></div>
+            <div><img src="https://www.genspark.ai/api/files/s/QzwowOOJ?cache_control=3600" alt="웹카드 엔딩" /></div>
+          </div>
+
+          <!-- 가운데 스케일러 — 후보 메인 사진 -->
+          <!--
+            [이미지 교체 안내 — 중앙 스케일러]
+            파일명: candidate-profile.jpg (또는 candidate-pose1.png 배경제거본)
+            스크롤 시 전체화면 → 카드 크기로 축소되는 메인 이미지입니다.
+            예) src="./images/candidate-profile.jpg"
+          -->
+          <div class="scaler">
+            <img
+              src="./images/candidate-profile.jpg"
+              alt="한상경 충남교육감 예비후보"
+              id="scalerImg"
+            />
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 아웃트로 섹션 -->
+    <section>
+      <div style="text-align:center; padding: 40px 24px;">
+        <p class="outro-title">
+          충남교육의 변화,<br />
+          <em>함께 만들어 주세요.</em>
+        </p>
+        <p class="outro-sub">말이 아닌 성과로 증명하겠습니다.</p>
+        <a href="index.html" class="outro-link">← 메인 페이지로 돌아가기</a>
+      </div>
+    </section>
+  </main>
+
+</div>
+
+<!-- Motion 라이브러리 (scroll animation) -->
+<script type="module">
+  import { animate, scroll, cubicBezier }
+    from 'https://cdn.jsdelivr.net/npm/motion@11.11.16/+esm';
+
+  /* reduced-motion 설정 감지 */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    console.log('Reduced motion: animations skipped');
+  } else {
+
+    const image        = document.querySelector('.scaler img');
+    const firstSection = document.querySelector('main section:first-of-type');
+    const layers       = document.querySelectorAll('.grid > .layer');
+
+    /* 자연 크기 & 뷰포트 */
+    const naturalW  = image.offsetWidth;
+    const naturalH  = image.offsetHeight;
+    const vpW       = window.innerWidth;
+    const vpH       = window.innerHeight;
+
+    /* ── 스케일러: 전체화면 → 카드 크기로 수축 ── */
+    scroll(
+      animate(image, {
+        width:  [vpW, naturalW],
+        height: [vpH, naturalH],
+      }, {
+        width:  { easing: cubicBezier(0.65, 0, 0.35, 1) },
+        height: { easing: cubicBezier(0.42, 0, 0.58, 1) },
+      }),
+      {
+        target: firstSection,
+        offset: ['start start', '80% end end'],
+      }
+    );
+
+    /* ── 레이어: 순서대로 fade-in + scale-in ── */
+    const scaleEasings = [
+      cubicBezier(0.42, 0, 0.58, 1),   /* Layer 1 */
+      cubicBezier(0.76, 0, 0.24, 1),   /* Layer 2 */
+      cubicBezier(0.87, 0, 0.13, 1),   /* Layer 3 */
+    ];
+
+    layers.forEach((layer, i) => {
+      const endOffset = `${1 - i * 0.05} end`;
+
+      /* fade */
+      scroll(
+        animate(layer, { opacity: [0, 0, 1] },
+          { offset: [0, 0.55, 1], easing: cubicBezier(0.61, 1, 0.88, 1) }),
+        { target: firstSection, offset: ['start start', endOffset] }
+      );
+
+      /* scale */
+      scroll(
+        animate(layer, { scale: [0, 0, 1] },
+          { offset: [0, 0.3, 1], easing: scaleEasings[i] }),
+        { target: firstSection, offset: ['start start', endOffset] }
+      );
+    });
+  }
+</script>
+
+</body>
+</html>
