@@ -356,7 +356,7 @@ ul { list-style: none; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(48px, 7vw, 96px) clamp(28px, 4vw, 64px);
+  padding: clamp(45px, 7vw, 96px) clamp(28px, 4vw, 64px);
   position: relative;
   z-index: 1;
 }
@@ -365,10 +365,10 @@ ul { list-style: none; }
 .hero-left::after {
   content: '';
   position: absolute;
-  top: 0; right: -48px;
+  top: 0; right: -40px;
   width: 96px; height: 100%;
   background: var(--color-navy);
-  clip-path: polygon(0 0, 48px 0, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 35px 0, 100% 100%, 0 100%);
   z-index: 2;
 }
 
@@ -506,8 +506,8 @@ ul { list-style: none; }
   background: linear-gradient(
     to right,
     var(--color-navy) 0%,
-    rgba(42,37,32,0.60) 14%,
-    rgba(42,37,32,0.18) 28%,
+    rgba(42,37,32,0.60) 5%,
+    rgba(42,37,32,0.18) 20%,
     rgba(42,37,32,0)    44%
   );
   pointer-events: none;
