@@ -346,7 +346,7 @@ ul { list-style: none; }
    * 텍스트 더 좁게 → "30fr 70fr"
    * 텍스트 더 넓게 → "42fr 58fr"
    */
-  grid-template-columns: 30fr 70fr;
+  grid-template-columns: 32fr 68fr;
   overflow: hidden;
 }
 
