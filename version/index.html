@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이지를 준비 중입니다 | Coming Soon</title>
+    <style>
+        /* 기본 스타일 초기화 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        /* 메인 컨테이너 */
+        .container {
+            text-align: center;
+            padding: 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* 아이콘 스타일 */
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: #2d3436;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #636e72;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* 버튼 스타일 */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #0984e3;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #74b9ff;
+            transform: translateY(-2px);
+        }
+
+        /* 애니메이션 정의 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* 하단 푸터 */
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.9rem;
+            color: #b2bec3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="icon">✨</div>
+        <h1>현재 페이지를 단장하고 있습니다.</h1>
+        <p>더 나은 서비스를 제공하기 위해 열심히 작업 중입니다.<br>
+           곧 멋진 모습으로 찾아뵙겠습니다!</p>
+        
+        <a href="mailto:arttjsal@gmail.com" class="btn">문의하기</a>
+    </div>
+
+    <div class="footer">
+        © 2026 bridgE. All rights reserved.
+    </div>
+
+</body>
+</html>
