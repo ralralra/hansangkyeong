@@ -1,4 +1,4 @@
-# 예비후보 웹페이지 
+# 웹페이지 관련
 
 html, java, css ,appsSCript, github 
 
